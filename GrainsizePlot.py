@@ -77,11 +77,17 @@ def plot_grainsize_heatmap(data, depth_col, grainsize_cols, cmap="viridis"):
 
     # Plot the heatmap using Seaborn
     plt.figure(figsize=(8,6))
-    sns.heatmap(grainsize_distributions, cmap = cmap, norm = norm, cbar = True,
-                yticklabels = depths, xticklabels = 5)
+    sns.heatmap(grainsize_distributions, cmap=cmap, norm=norm, cbar=True, xticklabels=5)
 
 #    ax.set_yticks(range(len(depths)))
 #    ax.set_yticklabels(depths)
+    # Setting the y-axis ticks to be every 5 cm over the specified range (e.g., 0 to 100 cm)
+    y_ticks = np.arange(0, len(depths), 5)  # Index positions for every 5th entry
+    y_ticklabels = np.arange(0, int(max(depths)) + 1, 5)  # Labels in cm from 0 to max depth
+
+    # Apply custom y-ticks and labels
+    plt.gca().set_yticks(y_ticks)
+    plt.gca().set_yticklabels(y_ticklabels)
 
     plt.title(f'Grainsize - {core_id}')
     plt.xlabel('Grainsize')
@@ -112,22 +118,20 @@ df['depth_top'] = df['depth_top'].astype(float)
 df['depth_bottom'] = df['depth_bottom'].astype(float)
 
 
-
-### defining vars for plot
+### defining vars for expand & plot
 depth_col = 'depth_top'
 grainsize_cols = df.columns.difference(['ID', 'depth_range', 'depth_top', 'depth_bottom']).tolist()
 
-### defining cmap
+
+### Preparing variables for plot function
+matplotlib.use('TkAgg')  # different visualizer that doesn't freeze
+plt.ion()  # Turn off interactive mode
+df_expand = expand_grainsize_data(df, "depth_top", "depth_bottom", grainsize_cols)
 # Create a custom colormap where values below 0.05 are white
 colors = [(1, 1, 1), (0, 0.5, 0.3), (0, 0.7, 0.5), (0.2, 0.8, 0.8), (0, 0.5, 1), (0, 0, 0.5)]  # white to other colors
 cmap = LinearSegmentedColormap.from_list("gs_cmap", colors, N = 256)
 
-
-### Plotting
-matplotlib.use('TkAgg')
-plt.ion()  # Turn off interactive mode
-#plot_grainsize_heatmap(small_data, depth_col, small_grainsize_cols, cmap="viridis")
-plot_grainsize_heatmap(df, depth_col, grainsize_cols, cmap = cmap)
+plot_grainsize_heatmap(df_expand, depth_col, grainsize_cols, cmap = cmap)
 
 
 
@@ -140,38 +144,4 @@ depth_col = 'depth_top'
 small_data = df.head(10)
 small_grainsize_cols = grainsize_cols[:20]
 small_data_expand = expand_grainsize_data(small_data, 'depth_top', 'depth_bottom', grainsize_cols)
-
 data = small_data_expand
-
-
-
-
-# Ensure data is sorted by depth
-data[depth_col] = data[depth_col].astype(float)
-data = data.sort_values(by=depth_col)
-
-# Extract core ID, first 8 characters in first entry of "ID" column
-core_id = data['ID'].iloc[0][:8]
-
-# Extract depth and grain size distribution values
-depths = data[depth_col]
-grainsize_distributions = data[small_grainsize_cols]
-
-# Sort the grain size columns numerically
-grainsize_distributions = grainsize_distributions.reindex(sorted(small_grainsize_cols, key=float), axis=1)
-# Set 0 for values below 0.05
-norm = plt.Normalize(vmin=0.05, vmax=8)
-
-# Plot the heatmap using Seaborn
-plt.figure(figsize=(8,6))
-sns.heatmap(grainsize_distributions, cmap = cmap, cbar = True)
-
-plt.title(f'Grainsize - {core_id}')
-plt.xlabel('Grainsize')
-plt.ylabel('Depth (cm)')
-plt.xticks(rotation=90)  # Rotate depth labels for better readability
-plt.show()
-
-
-
-
