@@ -1,5 +1,5 @@
 import pandas as pd
-#import numpy as np
+import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
@@ -19,7 +19,6 @@ def expand_grainsize_data(df, depth_top_col, depth_bottom_col, grainsize_cols):
     - depth_bottom_col: the name of the column representing the bottom depth (format as float).
     - grainsize_cols: List of column names for grain size distribution.
        """
-
     # Create an empty list to store expanded rows
     expanded_rows = []
 
@@ -52,7 +51,6 @@ def expand_grainsize_data(df, depth_top_col, depth_bottom_col, grainsize_cols):
 def plot_grainsize_heatmap(data, depth_col, grainsize_cols, cmap="viridis"):
     """
     Plots a heat map of grainsize distributions down core.
-
     Parameters:
     - data: A DataFrame containing grain size distributions and depth.
     - depth_col: The name of the column representing depth.
@@ -79,11 +77,9 @@ def plot_grainsize_heatmap(data, depth_col, grainsize_cols, cmap="viridis"):
     plt.figure(figsize=(8,6))
     sns.heatmap(grainsize_distributions, cmap=cmap, norm=norm, cbar=True, xticklabels=5)
 
-#    ax.set_yticks(range(len(depths)))
-#    ax.set_yticklabels(depths)
-    # Setting the y-axis ticks to be every 5 cm over the specified range (e.g., 0 to 100 cm)
-    y_ticks = np.arange(0, len(depths), 5)  # Index positions for every 5th entry
-    y_ticklabels = np.arange(0, int(max(depths)) + 1, 5)  # Labels in cm from 0 to max depth
+    # Setting the y-axis ticks to be every 5 cm
+    y_ticks = np.arange(0, len(depths), 5)
+    y_ticklabels = np.arange(0, int(max(depths)) + 1, 5)
 
     # Apply custom y-ticks and labels
     plt.gca().set_yticks(y_ticks)
@@ -96,8 +92,8 @@ def plot_grainsize_heatmap(data, depth_col, grainsize_cols, cmap="viridis"):
     plt.show()
 
 
-## Function to extract depths from the sample ID
-def extract_depth(id_string):
+
+def extract_depth(id_string):   ## Function to extract depths from the sample ID
     ### Use regular expression to find patterns like '10-15cm'
     match = re.search(r'(\d+-\d+)cm', id_string)
     if match:
