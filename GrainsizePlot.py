@@ -92,7 +92,6 @@ def plot_grainsize_heatmap(data, depth_col, grainsize_cols, cmap="viridis"):
     plt.show()
 
 
-
 def extract_depth(id_string):   ## Function to extract depths from the sample ID
     ### Use regular expression to find patterns like '10-15cm'
     match = re.search(r'(\d+-\d+)cm', id_string)
