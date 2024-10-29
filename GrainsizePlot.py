@@ -6,6 +6,20 @@ from matplotlib.colors import LinearSegmentedColormap
 import seaborn as sns
 import re
 
+
+def extract_depth(id_string):   ## Function to extract depths from the sample ID column
+    """
+    this function uses a regular expression to find numerical patterns in the ID field of grainsize data
+    it will match any pattern number-number followed directly by 'cm', like 0-5cm, 0-15cm, 100-105cm
+    :param id_string: the ID string containing the depth information, e.g. 'WC-23-00_10-15cm'
+    :return: the depth range as a string, e.g. '05-10'
+    """
+    ### Use regular expression to find patterns like '10-15cm'
+    match = re.search(r'(\d+-\d+)cm', id_string)
+    if match:
+        return match.group(1)
+    return None
+
 def expand_grainsize_data(df, depth_top_col, depth_bottom_col, grainsize_cols):
     """
     Fills in the grainsize dataframe so there is a copy of the grainsize distribution
@@ -13,7 +27,7 @@ def expand_grainsize_data(df, depth_top_col, depth_bottom_col, grainsize_cols):
     heatmap.
 
     Parameters:
-     - df: A DataFrame containing grain size distributions and depth.
+    - df: A DataFrame containing grain size distributions and depth.
     - depth_top_col: The name of the column representing top depth (format as float).
     - depth_bottom_col: the name of the column representing the bottom depth (format as float).
     - grainsize_cols: List of column names for grain size distribution.
@@ -43,21 +57,45 @@ def expand_grainsize_data(df, depth_top_col, depth_bottom_col, grainsize_cols):
     # Sort by the new depth top to maintain order
     expanded_df = expanded_df.sort_values(by=depth_top_col)
 
+    # Reindex to include all depths from min to max depth, inserting NaNs where data is missing
+    full_depth_range = range(int(expanded_df[depth_top_col].min()), int(expanded_df[depth_top_col].max()) + 1)
+    expanded_df = expanded_df.set_index(depth_top_col).reindex(full_depth_range).reset_index()
+    expanded_df = expanded_df.rename(columns={'index': depth_top_col})
+
     return expanded_df
 
 
-def plot_grainsize_heatmap(data, depth_col, grainsize_cols, y_axis_type , elev_correction = 0, cmap="viridis"):
+def plot_grainsize_heatmap(grainsize_csv, y_axis_type, elev_correction=0, cmap="viridis"):
     """
     Plots a heat map of grainsize distributions down core.
     Parameters:
-    - data: A DataFrame containing grain size distributions and depth.
-    - depth_col: The name of the column representing top of the sample depth
-    - grainsize_cols: List of column names for grain size distribution.
+    - grainsize_csv: a csv file saved from cilas pal excel output
     - y_axis_type: "elevation" or "depth" are accepted for this field
     - elev_correction: cm elevation of ground surface. this value will be added to the depth values
     - cmap: Colormap to be used for the heat map. Default is 'viridis'.
     """
+
+    ### CSV file containing CILASpal output, formatted to exclude mean
+    # csv_file = r"C:\Users\eveve\OneDrive - University of North Carolina at Chapel Hill\PhDprojects\OysterReef\LabData\WardsCreek\Grainsize\WC-23-00\WC-23-00_grainsize.CSV"
+    #csv_file = r"C:\Users\eveve\OneDrive - University of North Carolina at Chapel Hill\PhDprojects\OysterReef\LabData\WardsCreek\Grainsize\WC-23-06\WC-23-06.csv"
+    df = pd.read_csv(grainsize_csv)
+
+    ### applying depth extraction & separation into bottom and top
+    df['depth_range'] = df['ID'].apply(extract_depth)
+    df[['depth_top', 'depth_bottom']] = df['depth_range'].str.split('-', expand=True)
+    df['depth_top'] = df['depth_top'].astype(float)
+    df['depth_bottom'] = df['depth_bottom'].astype(float)
+
+    ### defining vars for expand
+    grainsize_cols = df.columns.difference(
+        ['ID', 'depth_range', 'depth_top', 'depth_bottom', 'Mean', 'Median']).tolist()
+
+    ### Preparing variables for plot
+    # use expand_grainsize_data function to copy gs distribution for each cm in sample (see function descript above)
+    data = expand_grainsize_data(df, "depth_top", "depth_bottom", grainsize_cols)
+
     # Ensure data is sorted by depth
+    depth_col = 'depth_top'   # can edit this if prefer to plot with depth bottom or average
     data[depth_col] = data[depth_col].astype(float)
     data = data.sort_values(by=depth_col)
 
@@ -86,6 +124,8 @@ def plot_grainsize_heatmap(data, depth_col, grainsize_cols, y_axis_type , elev_c
     norm = plt.Normalize(vmin=0.05, vmax=8)
 
     # Plot the heatmap using Seaborn
+    matplotlib.use('TkAgg')  # different visualizer that doesn't freeze
+    plt.ion()  # Turn on interactive mode
     plt.figure(figsize=(8,6))
     sns.heatmap(grainsize_distributions, cmap=cmap, norm=norm, cbar=True, xticklabels=5)
 
@@ -109,39 +149,16 @@ def plot_grainsize_heatmap(data, depth_col, grainsize_cols, y_axis_type , elev_c
     plt.show()
 
 
-def extract_depth(id_string):   ## Function to extract depths from the sample ID
-    ### Use regular expression to find patterns like '10-15cm'
-    match = re.search(r'(\d+-\d+)cm', id_string)
-    if match:
-        return match.group(1)
-    return None
 
 
-### CSV file containing CILASpal output, formatted to exclude mean
-#csv_file = r"C:\Users\eveve\OneDrive - University of North Carolina at Chapel Hill\PhDprojects\OysterReef\LabData\WardsCreek\Grainsize\WC-23-00\WC-23-00_grainsize.CSV"
-csv_file = r"C:\Users\eveve\OneDrive - University of North Carolina at Chapel Hill\PhDprojects\OysterReef\LabData\WardsCreek\Grainsize\WC-23-06\WC-23-06.csv"
-df = pd.read_csv(csv_file)
-
-### applying depth extraction & separation into bottom and top
-df['depth_range'] = df['ID'].apply(extract_depth)
-df[['depth_top', 'depth_bottom']] = df['depth_range'].str.split('-', expand=True)
-df['depth_top'] = df['depth_top'].astype(float)
-df['depth_bottom'] = df['depth_bottom'].astype(float)
-
-### defining vars for expand & plot
-depth_col = 'depth_top'
-grainsize_cols = df.columns.difference(['ID', 'depth_range', 'depth_top', 'depth_bottom','Mean','Median']).tolist()
-
-### Preparing variables for plot function
-matplotlib.use('TkAgg')  # different visualizer that doesn't freeze
-plt.ion()  # Turn off interactive mode
-df_expand = expand_grainsize_data(df, "depth_top", "depth_bottom", grainsize_cols)
 # Create a custom colormap where values below 0.05 are white
-colors = [(1, 1, 1), (0, 0.5, 0.3), (0, 0.7, 0.5), (0.2, 0.8, 0.8), (0, 0.5, 1), (0, 0, 0.5)]  # white to other colors
-cmap = LinearSegmentedColormap.from_list("gs_cmap", colors, N = 256)
-elev_corr = 2.8
+colors = [(1, 1, 1), (0, 0.5, 0.3), (0, 0.7, 0.5), (0.2, 0.8, 0.8), (0, 0.5, 1),
+          (0, 0, 0.5)]  # white to other colors
+cmap = LinearSegmentedColormap.from_list("gs_cmap", colors, N=256)
 
-plot_grainsize_heatmap(df_expand, depth_col, grainsize_cols, y_axis_type="elevation", elev_correction=elev_corr, cmap = cmap)
+### Example run of function
+csv_file = r"C:\Users\eveve\OneDrive - University of North Carolina at Chapel Hill\PhDprojects\OysterReef\LabData\WardsCreek\Grainsize\WC-23-00\WC-23-00_grainsize.csv"
+plot_grainsize_heatmap(csv_file, y_axis_type="depth", elev_correction=-27.6, cmap = cmap)
 
 
 
