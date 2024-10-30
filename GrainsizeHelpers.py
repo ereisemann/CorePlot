@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
-from matplotlib.colors import LinearSegmentedColormap
 import seaborn as sns
 import re
 
@@ -75,9 +74,6 @@ def plot_grainsize_heatmap(grainsize_csv, y_axis_type, elev_correction=0, cmap="
     - cmap: Colormap to be used for the heat map. Default is 'viridis'.
     """
 
-    ### CSV file containing CILASpal output, formatted to exclude mean
-    # csv_file = r"C:\Users\eveve\OneDrive - University of North Carolina at Chapel Hill\PhDprojects\OysterReef\LabData\WardsCreek\Grainsize\WC-23-00\WC-23-00_grainsize.CSV"
-    #csv_file = r"C:\Users\eveve\OneDrive - University of North Carolina at Chapel Hill\PhDprojects\OysterReef\LabData\WardsCreek\Grainsize\WC-23-06\WC-23-06.csv"
     df = pd.read_csv(grainsize_csv)
 
     ### applying depth extraction & separation into bottom and top
@@ -147,29 +143,3 @@ def plot_grainsize_heatmap(grainsize_csv, y_axis_type, elev_correction=0, cmap="
     plt.xticks(rotation=90)  # Rotate depth labels for better readability
     plt.yticks(rotation=0)
     plt.show()
-
-
-
-
-# Create a custom colormap where values below 0.05 are white
-colors = [(1, 1, 1), (0, 0.5, 0.3), (0, 0.7, 0.5), (0.2, 0.8, 0.8), (0, 0.5, 1),
-          (0, 0, 0.5)]  # white to other colors
-cmap = LinearSegmentedColormap.from_list("gs_cmap", colors, N=256)
-
-### Example run of function
-csv_file = r"C:\Users\eveve\OneDrive - University of North Carolina at Chapel Hill\PhDprojects\OysterReef\LabData\WardsCreek\Grainsize\WC-23-00\WC-23-00_grainsize.csv"
-plot_grainsize_heatmap(csv_file, y_axis_type="depth", elev_correction=-27.6, cmap = cmap)
-
-
-
-
-
-
-####################### TESTING ###########################
-
-### subset for testing
-#depth_col = 'depth_top'
-#small_data = df.head(10)
-#small_grainsize_cols = grainsize_cols[:20]
-#small_data_expand = expand_grainsize_data(small_data, 'depth_top', 'depth_bottom', grainsize_cols)
-#data = small_data_expand
