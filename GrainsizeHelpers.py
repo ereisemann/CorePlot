@@ -122,7 +122,7 @@ def plot_grainsize_heatmap(grainsize_csv, y_axis_type, elev_correction=0, cmap="
     # Plot the heatmap using Seaborn
     matplotlib.use('TkAgg')  # different visualizer that doesn't freeze
     plt.ion()  # Turn on interactive mode
-    plt.figure(figsize=(8,6))
+    plt.figure(figsize=(4,8))
     sns.heatmap(grainsize_distributions, cmap=cmap, norm=norm, cbar=True, xticklabels=5)
 
     if y_axis_type == 'elevation':
