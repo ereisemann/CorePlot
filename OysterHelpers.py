@@ -5,11 +5,11 @@ import os
 
 sf_csv = r"C:\Users\eveve\OneDrive - University of North Carolina at Chapel Hill\PhDprojects\OysterReef\LabData\WardsCreek\DataSheets\WC-23-00_shellfraction.csv"
 sf_df = pd.read_csv(sf_csv)
-plt.scatter(sf_df['dry_shell_fraction'], sf_df['Interval_top_cm'])
+#plt.scatter(sf_df['dry_shell_fraction'], sf_df['Interval_top_cm'])
 
 def plot_shell_fraction(shell_fraction_csv, depth_top_col, depth_bottom_col, shell_fraction_col, y_axis_type, elev_correction):
     filename = os.path.basename(shell_fraction_csv)  # Gets 'WC-23-00_shellfraction.csv'
-    core_id = filename[:8]         # Gets 'WC-23-00'
+    core_id = filename[:8]   # Gets 'WC-23-00'
 
     sf_df = pd.read_csv(shell_fraction_csv)
     # calculating sample center depth for point plotting
@@ -29,8 +29,9 @@ def plot_shell_fraction(shell_fraction_csv, depth_top_col, depth_bottom_col, she
 
     matplotlib.use('TkAgg')  # different visualizer that doesn't freeze
     plt.ion()  # Turn on interactive mode
-    plt.figure(figsize=(8, 6))
+    plt.figure(figsize=(4, 8))
     plt.scatter(sf_df[shell_fraction_col], depths)
+    plt.plot(sf_df[shell_fraction_col], depths, '-o')
 
     if y_axis_type == 'elevation':
         y_ticklabels = np.arange(int(max(depths)), int(min(depths)) - 1, -5)
