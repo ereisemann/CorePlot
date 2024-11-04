@@ -33,11 +33,15 @@ def plot_shell_fraction(shell_fraction_csv, depth_top_col, depth_bottom_col, she
     plt.scatter(sf_df[shell_fraction_col], depths)
     plt.plot(sf_df[shell_fraction_col], depths, '-o')
 
+
+    min_depth = int(np.floor(min(depths)/5)*5)
+    max_depth = int(np.ceil(max(depths)/5)*5)
+
     if y_axis_type == 'elevation':
-        y_ticklabels = np.arange(int(max(depths)), int(min(depths)) - 1, -5)
+        y_ticklabels = np.arange(max_depth, min_depth - 1, -5)
         plt.ylabel('Elevation (cm NAVD 88)')
     else:
-        y_ticklabels = np.arange(int(min(depths)), int(max(depths)) + 1, 5)
+        y_ticklabels = np.arange(min_depth, max_depth + 1, 5)
         plt.ylabel('Depth (cm)')
 
     # Apply custom y-ticks and labels
