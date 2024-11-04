@@ -15,9 +15,9 @@ plot_grainsize_heatmap(gs_csv, y_axis_type="elevation", elev_correction=ec, cmap
 
 ### Oyster Shell Fraction Plotting (see OysterHelpers.py for functions)
 ## Format CSV: file name must include core name as first characters, specify depth interval top and bottom as columns, and a shell fraction column
-sf_csv = r"C:\Users\eveve\OneDrive - University of North Carolina at Chapel Hill\PhDprojects\OysterReef\LabData\WardsCreek\DataSheets\WC-23-00_shellfraction.csv"
+sf_csv = r"C:\Users\eveve\OneDrive - University of North Carolina at Chapel Hill\PhDprojects\OysterReef\LabData\WardsCreek\DataSheets\WC-23-07_shellfraction.csv"
 sf_df = pd.read_csv(sf_csv)
-ec = -27.60  # elevation of surface of core, use 0 if plotting with depth
+ec = 21.6  # elevation of surface of core, use 0 if plotting with depth
 #plt.scatter(sf_df['dry_shell_fraction'], sf_df['Interval_top_cm'])
 plot_shell_fraction(sf_csv, depth_top_col='interval_top_cm', depth_bottom_col="interval_bottom_cm",
                     shell_fraction_col="dry_shell_fraction", y_axis_type='elevation', elev_correction=ec)
