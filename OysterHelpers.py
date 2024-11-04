@@ -2,6 +2,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import pandas as pd
 import os
+import numpy as np
 
 #sf_csv = r"C:\Users\eveve\OneDrive - University of North Carolina at Chapel Hill\PhDprojects\OysterReef\LabData\WardsCreek\DataSheets\WC-23-04_shellfraction.csv"
 #sf_df = pd.read_csv(sf_csv)
