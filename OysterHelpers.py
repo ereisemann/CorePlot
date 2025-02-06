@@ -10,7 +10,7 @@ import numpy as np
 
 def plot_shell_fraction(shell_fraction_csv, depth_top_col, depth_bottom_col, shell_fraction_col, y_axis_type, elev_correction):
     filename = os.path.basename(shell_fraction_csv)  # Gets 'WC-23-00_shellfraction.csv'
-    core_id = filename[:8]   # Gets 'WC-23-00'
+    core_id = filename[:10]   # Gets 'WC-23-00'
 
     sf_df = pd.read_csv(shell_fraction_csv)
     # calculating sample center depth for point plotting
