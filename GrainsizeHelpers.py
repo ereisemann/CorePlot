@@ -13,6 +13,9 @@ def extract_depth(id_string):   ## Function to extract depths from the sample ID
     :param id_string: the ID string containing the depth information, e.g. 'WC-23-00_10-15cm'
     :return: the depth range as a string, e.g. '05-10'
     """
+
+    id_string = id_string.replace("\n", "")
+
     ### Use regular expression to find patterns like '10-15cm'
     match = re.search(r'(\d+-\d+)cm', id_string)
     if match:
@@ -244,6 +247,7 @@ def plot_grainsize_heatmap(grainsize_csv, y_axis_type, elev_correction=0, cmap="
     ax.set_xlabel('Grainsize')
     plt.setp(ax.get_xticklabels(), rotation=90)
     plt.setp(ax.get_yticklabels(), rotation=0)
+
 
     if new_fig:
         plt.show()

@@ -1,3 +1,6 @@
+
+import matplotlib
+matplotlib.use('Qt5Agg')
 import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
 from matplotlib.colors import LinearSegmentedColormap
@@ -11,7 +14,17 @@ import pandas as pd
 ## Format CSV: sample rows, sample name include core name and depth in format nn_nncm, columns grainsize bins.
 #gs_csv = r"C:\Users\eveve\OneDrive - University of North Carolina at Chapel Hill\PhDprojects\OysterReef\LabData\WardsCreek\Grainsize\WC-23-04\WC-23-04.csv"
 gs_csv = r"C:\Users\eveve\OneDrive - University of North Carolina at Chapel Hill\PhDprojects\OysterReef\LabData\WhiteOak\Grainsize\WO-23-JI\WO-JI-02_all.csv"
-ec = 2.4  # cm elevation of surface of core, use 0 if plotting with depth
+ec = 2.40
+
+gs_csv = r"C:\Users\eveve\OneDrive - University of North Carolina at Chapel Hill\PhDprojects\OysterReef\LabData\WhiteOak\Grainsize\WO-21-3\WO-21-03_ALL.csv"
+ec = -16.2  # cm elevation of surface of core, use 0 if plotting with depth
+
+gs_csv = r"C:\Users\eveve\OneDrive - University of North Carolina at Chapel Hill\PhDprojects\OysterReef\LabData\WhiteOak\Grainsize\WO-21-2\WO-21-02_All.csv"
+ec = -11.3  # cm elevation of surface of core, use 0 if plotting with depth
+
+gs_csv = r"C:\Users\eveve\OneDrive - University of North Carolina at Chapel Hill\PhDprojects\OysterReef\LabData\WhiteOak\Grainsize\WO-21-1\WO-21-01_ALL.csv"
+ec = -18.5  # cm elevation of surface of core, use 0 if plotting with depth
+
 colors = [(1, 1, 1), (0, 0.5, 0.3), (0, 0.7, 0.5), (0.2, 0.8, 0.8), (0, 0.5, 1),  # creating custom color map
           (0, 0, 0.5)]  # white to other colors
 cm = LinearSegmentedColormap.from_list("gs_cmap", colors, N=256)
