@@ -28,11 +28,14 @@ def plot_shell_fraction(shell_fraction_csv, depth_top_col, depth_bottom_col, she
         print(f'specify y_axis_type as "elevation" or "depth"')
         return
 
-    matplotlib.use('TkAgg')  # different visualizer that doesn't freeze
-    plt.ion()  # Turn on interactive mode
+
+    #matplotlib.use('TkAgg')  # different visualizer that doesn't freeze
+    matplotlib.use('Qt5Agg')  # Non-interactive backend suitable for saving plots
+    #plt.ion()  # Turn on interactive mode
     plt.figure(figsize=(4, 8))
     plt.scatter(sf_df[shell_fraction_col], depths)
     plt.plot(sf_df[shell_fraction_col], depths, '-o')
+    plt.xlim(0, 1)
 
     min_depth = int(np.floor(min(depths)/5)*5)
     max_depth = int(np.ceil(max(depths)/5)*5)
